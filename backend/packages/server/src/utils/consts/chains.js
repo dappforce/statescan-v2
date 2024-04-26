@@ -20,6 +20,7 @@ const chains = Object.freeze({
   crust: "crust",
   invarch: "invarch",
   tinkernet: "tinkernet",
+  subsocial: "subsocial",
 });
 
 const ss58Format = Object.freeze({
@@ -44,6 +45,7 @@ const ss58Format = Object.freeze({
   [chains.crust]: 66,
   [chains.invarch]: 117,
   [chains.tinkernet]: 117,
+  [chains.subsocial]: 28,
 });
 
 function getSs58Format(chain) {
