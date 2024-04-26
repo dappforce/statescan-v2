@@ -18,6 +18,7 @@ const chains = Object.freeze({
   heiko: "heiko",
   parallel: "parallel",
   crust: "crust",
+  subsocial: "subsocial",
 });
 
 const ss58Format = Object.freeze({
@@ -40,6 +41,7 @@ const ss58Format = Object.freeze({
   [chains.heiko]: 110,
   [chains.parallel]: 172,
   [chains.crust]: 66,
+  [chains.subsocial]: 28,
 });
 
 function getSs58Format(chain) {

@@ -14,6 +14,7 @@ import tangleTestnet from "./tangleTestnet";
 import tangle from "./tangle";
 import parallel from "./parallel";
 import heiko from "./heiko";
+import subsocial from "./subsocial";
 
 const chains = {
   kusama,
@@ -34,6 +35,7 @@ const chains = {
   "tangle-testnet": tangleTestnet,
   parallel,
   heiko,
+  subsocial,
 };
 
 export default chains;
