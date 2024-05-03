@@ -1,6 +1,6 @@
 // FIXME: complete the file
 
-import { ReactComponent as Polkadot } from "../../../components/icons/polkadot.svg";
+import { ReactComponent as Subsocial } from "../../../components/icons/subsocial.svg";
 
 const nodes = [
     {
@@ -11,14 +11,14 @@ const nodes = [
 
 const subsocial = {
     name: "Subsocial",
-    icon: <Polkadot />,
+    icon: <Subsocial />,
     identity: "subsocial",
     value: "subsocial",
     chain: "subsocial",
     symbol: "SUB",
     decimals: 10,
-    color: "#ED8C3B",
-    colorSecondary: "rgba(237,140,59, 0.1)",
+    color: "#eb2f96",
+    colorSecondary: "#f759ab",
     nodes,
     useOnChainBlockData: true,
     modules: {
