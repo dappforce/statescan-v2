@@ -8,6 +8,7 @@ x-common-variables: &common-variables
   MONGO_RUNTIME_SCAN_URL: mongodb://mongodb:27017
   MONGO_ASSET_SCAN_URL: mongodb://mongodb:27017
   MONGO_UNIQUES_SCAN_URL: mongodb://mongodb:27017
+  MONGO_DB_KNOWN_HEIGHTS_URL: mongodb://mongodb:27017
   MONGO_BLOCK_SCAN_NAME: statescan-subsocial-block
   MONGO_ACCOUNT_SCAN_NAME: statescan-subsocial-account
   MONGO_RUNTIME_SCAN_NAME: statescan-subsocial-runtime
@@ -26,7 +27,7 @@ services:
     container_name: statescan-mongo
     restart: always
     ports:
-      - "27100:27017"
+      - "127.0.0.1:27100:27017"
     volumes:
       - ./mongo-data:/data/db
 
@@ -40,6 +41,21 @@ services:
     restart: always
     environment:
       <<: *common-variables
+      SCAN_STEP: 500
+
+  asset-scan:
+    image: dappforce/statescan-subsocial:backend
+    command: [ "node", "asset-scan/src/index.js" ]
+    build:
+      context: backend
+      dockerfile: Dockerfile
+    container_name: asset-scan
+    restart: always
+    environment:
+      <<: *common-variables
+      USE_KNOWN_HEIGHTS: 0
+      MONGO_DB_KNOWN_HEIGHTS_NAME: known-heights-statescan-subsocial-asset
+      FOLLOW_BLOCK_SCAN: "true"
       SCAN_STEP: 500
 
   block-scan:
@@ -84,4 +100,4 @@ services:
       REACT_APP_PUBLIC_API_END_POINT: http://localhost:5010
       REACT_APP_PUBLIC_CHAIN: subsocial
       REACT_APP_DEFAULT_IPFS_GATEWAY: https://cloudflare-ipfs.com/ipfs/
-      REACT_APP_PUBLIC_SIMPLE_MODE: true
+      REACT_APP_PUBLIC_SIMPLE_MODE: "true"
