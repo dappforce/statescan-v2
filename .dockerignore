@@ -1,0 +1,10 @@
+**/.env
+**/.env.example
+**/*.md
+
+.github
+.husky
+.vscode
+.yarn
+
+**/node_modules/*

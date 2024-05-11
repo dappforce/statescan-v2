@@ -1,0 +1,9 @@
+**/.env
+**/.env.example
+**/*.md
+
+.github
+.husky
+.vscode
+
+**/node_modules/

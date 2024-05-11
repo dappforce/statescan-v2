@@ -17,6 +17,7 @@ import heiko from "./heiko";
 import crust from "./crust";
 import invarch from "./invarch";
 import tinkernet from "./tinkernet";
+import subsocial from "./subsocial";
 
 const chains = {
   kusama,
@@ -40,6 +41,7 @@ const chains = {
   heiko,
   tangle,
   tinkernet,
+  subsocial,
 };
 
 export default chains;

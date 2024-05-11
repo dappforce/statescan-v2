@@ -1,0 +1,120 @@
+version: '3.7'
+
+x-common-arguments: &common-arguments
+  REACT_APP_PUBLIC_API_END_POINT: https://api-explorer.subsocial.network/
+  REACT_APP_PUBLIC_SIMPLE_MODE: "true"
+
+x-common-variables: &common-variables
+  MONGO_DB_META_NAME: meta-subsocial
+  MONGO_META_URL: mongodb://mongodb:27017
+  MONGO_BLOCK_SCAN_URL: mongodb://mongodb:27017
+  MONGO_ACCOUNT_SCAN_URL: mongodb://mongodb:27017
+  MONGO_RUNTIME_SCAN_URL: mongodb://mongodb:27017
+  MONGO_ASSET_SCAN_URL: mongodb://mongodb:27017
+  MONGO_UNIQUES_SCAN_URL: mongodb://mongodb:27017
+  MONGO_DB_KNOWN_HEIGHTS_URL: mongodb://mongodb:27017
+  MONGO_BLOCK_SCAN_NAME: statescan-subsocial-block
+  MONGO_ACCOUNT_SCAN_NAME: statescan-subsocial-account
+  MONGO_RUNTIME_SCAN_NAME: statescan-subsocial-runtime
+  MONGO_ASSET_SCAN_NAME: statescan-subsocial-asset
+  MONGO_UNIQUES_SCAN_NAME: prod-statescan-subsocial-uniques
+  CHAIN: subsocial
+  WS_ENDPOINT: wss://para.f3joule.space
+  USE_META: 1
+  SIMPLE_MODE: 1
+  LOG_LEVEL: info
+  NODE_ENV: production
+
+services:
+  mongodb:
+    image: mongo:4.4.18 #image: mongodb/mongodb-community-server:6.0-ubi8
+    container_name: statescan-mongo
+    restart: always
+    ports:
+      - "127.0.0.1:27100:27017"
+    volumes:
+      - ./mongo-data:/data/db
+
+  account-scan:
+    image: dappforce/statescan-subsocial:backend
+    command: ["node", "account-scan/src/index.js"]
+    build:
+      context: backend
+      dockerfile: Dockerfile
+    container_name: account-scan
+    restart: always
+    environment:
+      <<: *common-variables
+      SCAN_STEP: 500
+
+  asset-scan:
+    image: dappforce/statescan-subsocial:backend
+    command: [ "node", "asset-scan/src/index.js" ]
+    build:
+      context: backend
+      dockerfile: Dockerfile
+    container_name: asset-scan
+    restart: always
+    environment:
+      <<: *common-variables
+      USE_KNOWN_HEIGHTS: 0
+      MONGO_DB_KNOWN_HEIGHTS_NAME: known-heights-statescan-subsocial-asset
+      FOLLOW_BLOCK_SCAN: "true"
+      SCAN_STEP: 500
+
+  block-scan:
+    image: dappforce/statescan-subsocial:backend
+    command: ["node", "block-scan/src/index.js"]
+    container_name: block-scan
+    restart: always
+    environment:
+      <<: *common-variables
+      SCAN_STEP: 500
+
+  runtime-scan:
+    image: dappforce/statescan-subsocial:backend
+    command: ["node", "runtime-scan/src/index.js"]
+    container_name: runtime-scan
+    restart: always
+    environment:
+      <<: *common-variables
+      SCAN_STEP: 500
+
+  rest-api:
+    image: dappforce/statescan-subsocial:backend
+    command: ["node", "server/src/index.js"]
+    container_name: rest-api
+    restart: always
+    ports:
+      - "127.0.0.1:5010:5010"
+    environment:
+      <<: *common-variables
+      PORT: 5010
+      VIRTUAL_HOST: api-explorer.subsocial.network
+      VIRTUAL_PORT: 5010
+      VIRTUAL_PATH: /
+      LETSENCRYPT_HOST: api-explorer.subsocial.network
+      LETSENCRYPT_EMAIL: dummyemails@sub.id
+
+  web-app:
+    image: dappforce/statescan-subsocial:web-app
+    build:
+      context: site
+      dockerfile: Dockerfile
+      args:
+        <<: *common-arguments
+    environment:
+      VIRTUAL_HOST: explorer.subsocial.network
+      VIRTUAL_PORT: 3000
+      VIRTUAL_PATH: /
+      LETSENCRYPT_HOST: explorer.subsocial.network
+      LETSENCRYPT_EMAIL: dummyemails@sub.id
+    container_name: web-app
+    restart: always
+    ports:
+      - "127.0.0.1:3000:3000"
+
+networks:
+  default:
+    name: net-explorer
+    external: true
